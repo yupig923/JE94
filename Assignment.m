@@ -141,3 +141,58 @@ fprintf('%8s| %9.2f %9.2f  [kJ/kg/K]\n','Total S',S1/kJ,S2/kJ);
 fprintf('----------------------------------------------\n%8s| %9.4f %9.4f  [K]\n----------------------------------------------\n','T2-int vs T2-bis',T2int,T2bis);
 %% Here starts your part (compressor,combustor,turbine and nozzle). ...
 % Make a choice for which type of solution method you want to use.
+
+
+
+
+
+%Compressor part
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%combustor part
+
+
+%Combustion process
+%  CH4+2O2=CO2+2H2O
+a=1;b=2;c=1;d=2;
+%Calculate Equivulence ratio
+AFstoich=((b/a)/Xair(2))*MAir/Mi(1); %Stoichiometric A/F ratio
+equ=AFstoich/AF; %Equivulence ratio
+
+%Calculate u before ignition 
+
+
+
+
+
+
+
+
+%Calculate u after ignition 
+
+
+
+
+
+
+%turbine part
+
+
+
+
+
+
+%nozzle part
