@@ -34,9 +34,11 @@ TR = [200:1:3000];NTR=length(TR);
 for i=1:NSp                                                                 % Compute properties for all species for temperature range TR 
     hia(:,i) = HNasa(TR,SpS(i));                                            % hia is a NTR by 5 matrix
     sia(:,i) = SNasa(TR,SpS(i));                                            % sia is a NTR by 5 matrix
+    uia(:,i) =  UNasa(TR,SpS(i));
 end
 hair_a= Yair*hia';                                                          % Matlab 'inner product': 1x5 times 5xNTR matrix muliplication, 1xNTR resulT -> enthalpy of air for range of T 
 sair_a= Yair*sia';                                                          % same but this thermal part of entropy of air for range of T
+hair_a=Yair*uia';
 % whos hia sia hair_a sair_a                                                  % Shows dimensions of arrays on commandline
 %% Two methods are presented to 'solve' the conservation equations for the Diffusor
 %-------------------------------------------------------------------------
