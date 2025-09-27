@@ -182,6 +182,7 @@ YN2=Yair(5)*(AF/(1+AF))
 Xfuel=(Yfuel/Mi(1))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
 XO2=(YO2/Mi(2))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
 XN2=(YN2/Mi(5))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
+U_beforecomb=Yfuel*UNasa(T2,myfind(cFuel))+YN2*UNasa(T2,myfind("N2"))+YO2*UNasa(T2,myfind("O2"));
 
 
 
@@ -204,6 +205,7 @@ dXH2O = (d/a) * Xfuel; % H2O produced
 X_aftercomb = [0 XO2-dXO2 dXCO2 dXH2O XN2]
 M_aftercomb = X_aftercomb*Mi';                                                            % Row times Column = inner product 
 Y_aftercomb = X_aftercomb.*Mi/M_aftercomb; 
+U_aftercomb =Y_aftercomb.*uia;
 
 %turbine part
 

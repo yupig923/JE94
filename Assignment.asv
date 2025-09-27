@@ -182,6 +182,7 @@ YN2=Yair(5)*(AF/(1+AF))
 Xfuel=(Yfuel/Mi(1))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
 XO2=(YO2/Mi(2))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
 XN2=(YN2/Mi(5))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
+U_beforecomb=Yfuel*UNasa(T2,myfind(cFuel))+YN2*UNasa(T2,myfind("N2"))+YO2*UNasa(T2,myfind("O2"));
 
 
 
@@ -194,15 +195,18 @@ XN2=(YN2/Mi(5))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
 %set n_air=1
 n_fuel=Xfuel
 % moles changed (per reaction stoichiometry)
-dnO2  = (b/a) * Xfuel; % O2 consumed
-dnCO2 = (c/a) * Xfuel; % CO2 produced
-dnH2O = (d/a) * Xfuel; % H2O produced
+dXO2  = (b/a) * Xfuel; % O2 consumed
+dXCO2 = (c/a) * Xfuel; % CO2 produced
+dXH2O = (d/a) * Xfuel; % H2O produced
 
-n2fuel2=0
-n2O2=XO2-dnO2
-n2CO2=dnCO2
-n2H2O=dnH2O
-XN2
+
+
+
+X_aftercomb = [0 XO2-dXO2 dXCO2 dXH2O XN2]
+M_aftercomb = X_aftercomb*Mi';                                                            % Row times Column = inner product 
+Y_aftercomb = X_aftercomb.*Mi/M_aftercomb; 
+U_aftercomb =Y_aftercomb
+
 %turbine part
 
 
