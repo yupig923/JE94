@@ -229,11 +229,22 @@ Volume3=(T3*Rg*1)/P3;
 P4=(sum(X4)*Rg4*T4)/Volume3;
 
 
-
-
 %turbine part
+%S5=S4
+S5=0;
+for j =1:length(iSp)
+    S5=S5+SNasa(T4,SpS(j))*Y4(j);    
+    end
+
+h4=0;
+for j =1:length(iSp)
+    h4=h4+HNasa(T4,SpS(j))*Y4(j);    
+    end
+
 %S4=S5=S6 T4>T5>T6
 Wtur=Wcomp;
+h5=h4+h2-h3;
+
 
 
 
