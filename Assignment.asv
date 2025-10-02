@@ -226,7 +226,7 @@ U4=U3;
 T4 = interp1(Uair_4,TR,U4); 
 %Use ideal gas 
 Volume3=(T3*Rg*1)/P3;
-P4=(sum(X4)*Rg4*T4)/Volume3;
+P4=sum(X4)*Rg4*T4)
 
 
 
