@@ -30,7 +30,7 @@ Yair = Xair.*Mi/MAir;                                                       % Ve
 %% Fuel composition
 Yfuel = [1 0 0 0 0];                                                        % Only fuel
 %% Range of enthalpies/thermal part of entropy of species
-TR = [200:1:3000];NTR=length(TR);
+TR = [200:1:5000];NTR=length(TR);
 for i=1:NSp                                                                 % Compute properties for all species for temperature range TR 
     hia(:,i) = HNasa(TR,SpS(i));                                            % hia is a NTR by 5 matrix
     sia(:,i) = SNasa(TR,SpS(i));                                            % sia is a NTR by 5 matrix
@@ -38,7 +38,7 @@ for i=1:NSp                                                                 % Co
 end
 hair_a= Yair*hia';                                                          % Matlab 'inner product': 1x5 times 5xNTR matrix muliplication, 1xNTR resulT -> enthalpy of air for range of T 
 sair_a= Yair*sia';                                                          % same but this thermal part of entropy of air for range of T
-hair_a=Yair*uia';
+uair_a=Yair*uia';
 % whos hia sia hair_a sair_a                                                  % Shows dimensions of arrays on commandline
 %% Two methods are presented to 'solve' the conservation equations for the Diffusor
 %-------------------------------------------------------------------------
@@ -152,6 +152,51 @@ fprintf('----------------------------------------------\n%8s| %9.4f %9.4f  [K]\n
 
 
 
+function [P3, T3, h3, Wcomp] = compressor(P2, T2, s2, P3overP2, Yair, SpS, mfurate, AF)
+
+% Inputs:
+%   P2, T2    - inlet pressure (Pa) and temperature (K)
+%   s2        - inlet entropy (J/kg-K)
+%   P3overP2  - pressure ratio
+%   Yair      - species mass fractions (1 x NSp)
+%   SpS       - species identifiers (used by HNasa, SNasa)
+%   mfurate   - fuel mass flow (kg/s)
+%   AF        - air-fuel ratio
+
+% Outputs:
+%   P3, T3    - outlet pressure (Pa), outlet temperature (K)
+%   h3        - outlet enthalpy (J/kg)
+%   Wcomp     - compressor work (W)
+
+% Pressure ratio
+P3 = P2 * P3overP2;
+
+% Solve T3 from isentropic relation (s3 = s2)
+entropy_residual = @(T) SNasa(T, SpS, Yair, P3) - s2;
+Tguess = T2 * (P3overP2)^0.28; % crude gamma-based guess
+T3 = fzero(entropy_residual, Tguess);
+
+% Outlet enthalpy from NASA polynomials
+NSp = length(SpS);
+hi3 = zeros(1, NSp);
+for i = 1:NSp
+    hi3(i) = HNasa(T3, SpS(i));
+end
+h3 = Yair * hi3'; % mixture enthalpy
+
+% Inlet enthalpy (needed for Δh)
+hi2 = zeros(1, NSp);
+for i = 1:NSp
+    hi2(i) = HNasa(T2, SpS(i));
+end
+h2 = Yair * hi2';
+
+% Compressor work
+mflow2 = AF * mfurate;        % air mass flow rate
+Wcomp  = mflow2 * (h3 - h2);
+
+end
+
 
 
 
@@ -182,7 +227,7 @@ YN2=Yair(5)*(AF/(1+AF))
 Xfuel=(Yfuel/Mi(1))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
 XO2=(YO2/Mi(2))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
 XN2=(YN2/Mi(5))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
-U_beforecomb=Yfuel*UNasa(T2,SpS(1))+YN2*UNasa(T2,SpS(2))+YO2*UNasa(T2,SpS(3));
+U_beforecomb=Yfuel*UNasa(T2,SpS(1))+YN2*UNasa(T2,SpS(5))+YO2*UNasa(T2,SpS(2));
 
 
 
@@ -205,9 +250,10 @@ dXH2O = (d/a) * Xfuel; % H2O produced
 X_aftercomb = [0 XO2-dXO2 dXCO2 dXH2O XN2]
 M_aftercomb = X_aftercomb*Mi';                                                            % Row times Column = inner product 
 Y_aftercomb = X_aftercomb.*Mi/M_aftercomb; 
-
+uair_aftercomb=Y;
 %U_beforecomb=U_aftercomb find T after comustion
-T2 = interp1(hair_a,TR,h2); 
+U_aftercomb=U_beforecomb;
+T2 = interp1(uair_aftercomb,TR,U_aftercomb); 
 %Use ideal gas 
 
 
