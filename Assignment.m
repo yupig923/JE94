@@ -232,8 +232,8 @@ P4=(sum(X4)*Rg4*T4)/Volume3;
 
 
 %turbine part
-
-
+%S4=S5=S6 T4>T5>T6
+Wtur=Wcomp;
 
 
 
