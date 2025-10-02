@@ -210,7 +210,7 @@ YN2=Yair(5)*(AF/(1+AF))
 Xfuel=(Yfuel/Mi(1))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
 XO2=(YO2/Mi(2))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
 XN2=(YN2/Mi(5))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
-U_beforecomb=Yfuel*UNasa(T3,SpS(1))+YN2*UNasa(T3,SpS(5))+YO2*UNasa(T3,SpS(2));
+U3=Yfuel*UNasa(T3,SpS(1))+YN2*UNasa(T3,SpS(5))+YO2*UNasa(T3,SpS(2));
 
 
 
@@ -221,7 +221,7 @@ U_beforecomb=Yfuel*UNasa(T3,SpS(1))+YN2*UNasa(T3,SpS(5))+YO2*UNasa(T3,SpS(2));
 %Calculate u after ignition 
 
 %set n_air=1
-n_fuel=Xfuel
+n_fuel=Xfuel;
 % moles changed (per reaction stoichiometry)
 dXO2  = (b/a) * Xfuel; % O2 consumed
 dXCO2 = (c/a) * Xfuel; % CO2 produced
@@ -230,13 +230,22 @@ dXH2O = (d/a) * Xfuel; % H2O produced
 
 
 
-X_aftercomb = [0 XO2-dXO2 dXCO2 dXH2O XN2]
-M_aftercomb = X_aftercomb*Mi';                                                            % Row times Column = inner product 
-Y_aftercomb = X_aftercomb.*Mi/M_aftercomb; 
-uair_aftercomb=(Y_aftercomb.*uia);
+X4 = [0 XO2-dXO2 dXCO2 dXH2O XN2]
+M4 = X4*Mi';                                                            % Row times Column = inner product 
+Y4 = X4.*Mi/M4; 
+
+for i=1:length(TR)
+    Utemp=0;%temp to store u
+    for j =1:length(iSp)
+    Utemp=Utemp+UNasa(TR(i),SpS(j))*Y4(j);    
+    end
+    Uair_4(i) =Utemp;
+    
+end
+
 %U_beforecomb=U_aftercomb find T after comustion
-U_aftercomb=U_beforecomb;
-T2 = interp1(uair_aftercomb,TR,U_aftercomb); 
+U4=U3;
+T4 = interp1(Uair_4,TR,U4); 
 %Use ideal gas 
 
 
