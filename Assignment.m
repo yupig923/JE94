@@ -186,13 +186,13 @@ AFstoich=((b/a)/Xair(2))*MAir/Mi(1); %Stoichiometric A/F ratio
 equ=AFstoich/AF; %Equivulence ratio
 
 %Calculate u before ignition 
-Yfuel=1/(1+AF)
-YO2=Yair(2)*(AF/(1+AF))
-YN2=Yair(5)*(AF/(1+AF))
+Yfuel=1/(1+AF);
+YO2=Yair(2)*(AF/(1+AF));
+YN2=Yair(5)*(AF/(1+AF));
 
-Xfuel=(Yfuel/Mi(1))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
-XO2=(YO2/Mi(2))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
-XN2=(YN2/Mi(5))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5))
+Xfuel=(Yfuel/Mi(1))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5));
+XO2=(YO2/Mi(2))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5));
+XN2=(YN2/Mi(5))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5));
 U3=Yfuel*UNasa(T3,SpS(1))+YN2*UNasa(T3,SpS(5))+YO2*UNasa(T3,SpS(2));
 
 
@@ -208,7 +208,7 @@ dXH2O = (d/a) * Xfuel; % H2O produced
 
 
 
-X4 = [0 XO2-dXO2 dXCO2 dXH2O XN2]
+X4 = [0 XO2-dXO2 dXCO2 dXH2O XN2];
 M4 = X4*Mi';                                                            % Row times Column = inner product 
 Y4 = X4.*Mi/M4; 
 Rg4=Runiv/M4;
@@ -254,10 +254,26 @@ for i=1:length(TR)
     Hair_5(i) =Htemp;
     
 end
+
+
 T5 = interp1(Hair_5,TR,h5);                                                 % Interpolate h5 on Hair_5 to approximate T5. Pretty accurate
+Cp5=0;
+for j =1:length(iSp)
+    Cp5=Cp5+CpNasa(T5,SpS(j))*Y4(j);    
+   end
 
-P5=
-
-
+%Cpln(t4/t5)=Rln(p4/p5)
+Lnp4overp5=(Cp5*log(T4/T5))/Rg4;
+p4overp5=exp(Lnp4overp5);
+P5=P4/p4overp5;
 
 %nozzle part
+P6=Pamb;
+LnT5overT6=(Rg4*(log(P5/P6)))/Cp5;
+T6=T5/(exp(LnT5overT6));
+h6=0;
+for j =1:length(iSp)
+    h6=h6+HNasa(T6,SpS(j))*Y4(j);    
+end
+
+V6=sqrt(2*h5-2*h6);
