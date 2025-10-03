@@ -243,9 +243,20 @@ for j =1:length(iSp)
 
 %S4=S5=S6 T4>T5>T6
 Wtur=Wcomp;
+%m(h4-h5)=m(h3-h2)
 h5=h4+h2-h3;
 
+for i=1:length(TR)
+    Htemp=0;%temp to store u
+    for j =1:length(iSp)
+    Htemp=Htemp+HNasa(TR(i),SpS(j))*Y4(j);    
+    end
+    Hair_5(i) =Htemp;
+    
+end
+T5 = interp1(Hair_5,TR,h5);                                                 % Interpolate h5 on Hair_5 to approximate T5. Pretty accurate
 
+P5=
 
 
 
