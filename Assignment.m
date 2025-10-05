@@ -17,7 +17,7 @@ kJ=1e3;kmol=1e3;dm=0.1;bara=1e5;kPa = 1000;kN=1000;kg=1;s=1;
 %% Given conditions. 
 %  For the final assignment take the ones from the specific case you are supposed to do.                  
 v1=200;Tamb=250;P3overP2=7;Pamb=55*kPa;mfurate=0.68*kg/s;AF=85.65;             % These are the ones from the book
-cFuel='CH4';                                                           % Pick Gasoline as the fuel (other choices check Sp.Name)
+cFuel='CH4';                                                           % Pick CH4 as the fuel (other choices check Sp.Name)
 %% Select species for the case at hand
 iSp = myfind({Sp.Name},{cFuel,'O2','CO2','H2O','N2'});                      % Find indexes of these species
 SpS=Sp(iSp);                                                                % Subselection of the database in the order according to {'Gasoline','O2','CO2','H2O','N2'}
@@ -224,9 +224,9 @@ end
 %U4=U3 find T after combustion using interpolation
 U4=U3;
 T4 = interp1(Uair_4,TR,U4); 
-%Use ideal gas 
-Volume3=(T3*Rg*1)/P3;
-P4=(sum(X4)*Rg4*T4)/Volume3;
+%Use the given
+
+P4=P3;
 
 
 %turbine part
@@ -234,12 +234,12 @@ P4=(sum(X4)*Rg4*T4)/Volume3;
 S4=0;
 for j =1:length(iSp)
     S4=S4+SNasa(T4,SpS(j))*Y4(j);    %s4 based on mass fractions
-    end
+end
 
 h4=0;
 for j =1:length(iSp)
     h4=h4+HNasa(T4,SpS(j))*Y4(j);    %h4 based on mass fractions
-    end
+end
 
 %S4=S5=S6 T4>T5>T6
 Wtur=Wcomp;
