@@ -231,9 +231,9 @@ P4=(sum(X4)*Rg4*T4)/Volume3;
 
 %turbine part
 %S5=S4
-S5=0;
+S4=0;
 for j =1:length(iSp)
-    S5=S5+SNasa(T4,SpS(j))*Y4(j);    
+    S4=S4+SNasa(T4,SpS(j))*Y4(j);    
     end
 
 h4=0;
@@ -262,15 +262,28 @@ for j =1:length(iSp)
     Cp5=Cp5+CpNasa(T5,SpS(j))*Y4(j);    
    end
 
-%Cpln(t4/t5)=Rln(p4/p5)
-Lnp4overp5=(Cp5*log(T4/T5))/Rg4;
-p4overp5=exp(Lnp4overp5);
-P5=P4/p4overp5;
+% S5(T5, P5) = S4(T4, P4)
+% S = S°(T) - R ln(P/P°)
+% find P5
+S5_0 = 0;
+for j = 1:length(iSp)
+    S5_0 = S5_0 + SNasa(T5, SpS(j)) * Y4(j);
+end
+
+P5 = P4 * exp((S5_0 - S4) / Rg4);  % Isentropic relation via entropy equality
 
 %nozzle part
 P6=Pamb;
-LnT5overT6=(Rg4*(log(P5/P6)))/Cp5;
-T6=T5/(exp(LnT5overT6));
+for i = 1:length(TR)
+    Stemp = 0;
+    for j = 1:length(iSp)
+        Stemp = Stemp + SNasa(TR(i), SpS(j)) * Y4(j);
+    end
+    Sair_6(i) = Stemp - Rg4 * log(P6 / Pref);  
+end
+
+S5 = S5_0 - Rg4 * log(P5 / Pref);
+T6 = interp1(Sair_6, TR, S5);
 h6=0;
 for j =1:length(iSp)
     h6=h6+HNasa(T6,SpS(j))*Y4(j);    
