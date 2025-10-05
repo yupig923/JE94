@@ -221,7 +221,7 @@ for i=1:length(TR)
     
 end
 
-%U4=U3 find T after comustion using interpolation
+%U4=U3 find T after combustion using interpolation
 U4=U3;
 T4 = interp1(Uair_4,TR,U4); 
 %Use ideal gas 
@@ -277,3 +277,12 @@ for j =1:length(iSp)
 end
 
 V6=sqrt(2*h5-2*h6);
+fprintf("T3T4")
+fprintf('%8s| %9.2f %9.2f  [K]\n','Temp',T3,T4);
+fprintf("T5T6")
+fprintf('%8s| %9.2f %9.2f  [K]\n','Temp',T5,T6);
+fprintf("P3P4")
+fprintf('%8s| %9.2f %9.2f  [kPa]\n','Press',P3/kPa,P4/kPa);
+fprintf("P5P6")
+fprintf('%8s| %9.2f %9.2f  [kPa]\n','Press',P5/kPa,P6/kPa);
+fprintf('%8s| %9.2f %9.2f  [m/s]\n','v',v1,V6);
