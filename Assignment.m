@@ -153,8 +153,8 @@ P3 = P2 * P3overP2;
 entropy_residual = @(T) ...
     (sum(Yair .* arrayfun(@(i) SNasa(T, SpS(i)), 1:length(SpS)))) - S2;
 
-Tguess = T2 * (P3overP2)^0.28; % crude gamma-based guess
-T3 = fzero(entropy_residual, Tguess);
+Tguess = T2 * (P3overP2)^0.28; 
+T3 = fzero(entropy_residual, Tguess); %find t3
 
 % Outlet enthalpy from NASA polynomials
 NSp = length(SpS);
@@ -189,7 +189,7 @@ equ=AFstoich/AF; %Equivulence ratio
 Yfuel=1/(1+AF);
 YO2=Yair(2)*(AF/(1+AF));
 YN2=Yair(5)*(AF/(1+AF));
-
+%calculate parameters before comb
 Xfuel=(Yfuel/Mi(1))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5));
 XO2=(YO2/Mi(2))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5));
 XN2=(YN2/Mi(5))/(YO2/Mi(2)+Yfuel/Mi(1)+YN2/Mi(5));
@@ -208,9 +208,9 @@ dXH2O = (d/a) * Xfuel; % H2O produced
 
 
 
-X4 = [0 XO2-dXO2 dXCO2 dXH2O XN2];
+X4 = [0 XO2-dXO2 dXCO2 dXH2O XN2];%composion after combustion moles
 M4 = X4*Mi';                                                            % Row times Column = inner product 
-Y4 = X4.*Mi/M4; 
+Y4 = X4.*Mi/M4; %mass fraction after comb
 Rg4=Runiv/M4;
 for i=1:length(TR)
     Utemp=0;%temp to store u
@@ -233,12 +233,12 @@ P4=(sum(X4)*Rg4*T4)/Volume3;
 %S5=S4
 S4=0;
 for j =1:length(iSp)
-    S4=S4+SNasa(T4,SpS(j))*Y4(j);    
+    S4=S4+SNasa(T4,SpS(j))*Y4(j);    %s4 based on mass fractions
     end
 
 h4=0;
 for j =1:length(iSp)
-    h4=h4+HNasa(T4,SpS(j))*Y4(j);    
+    h4=h4+HNasa(T4,SpS(j))*Y4(j);    %h4 based on mass fractions
     end
 
 %S4=S5=S6 T4>T5>T6
@@ -257,11 +257,6 @@ end
 
 
 T5 = interp1(Hair_5,TR,h5);                                                 % Interpolate h5 on Hair_5 to approximate T5. Pretty accurate
-Cp5=0;
-for j =1:length(iSp)
-    Cp5=Cp5+CpNasa(T5,SpS(j))*Y4(j);    
-   end
-
 % S5(T5, P5) = S4(T4, P4)
 % S = S°(T) - R ln(P/P°)
 % find P5
@@ -282,14 +277,15 @@ for i = 1:length(TR)
     Sair_6(i) = Stemp - Rg4 * log(P6 / Pref);  
 end
 
-S5 = S5_0 - Rg4 * log(P5 / Pref);
-T6 = interp1(Sair_6, TR, S5);
+S5 = S5_0 - Rg4 * log(P5 / Pref); % Isentropic relation via entropy equality
+T6 = interp1(Sair_6, TR, S5); %FInd T6 using interpolation
 h6=0;
 for j =1:length(iSp)
     h6=h6+HNasa(T6,SpS(j))*Y4(j);    
 end
 
 V6=sqrt(2*h5-2*h6);
+%print out results
 fprintf("T3T4")
 fprintf('%8s| %9.2f %9.2f  [K]\n','Temp',T3,T4);
 fprintf("T5T6")
